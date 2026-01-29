@@ -1,0 +1,89 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'highestValuePalindrome' function below.
+#
+# The function is expected to return a STRING.
+# The function accepts following parameters:
+#  1. STRING s
+#  2. INTEGER n
+#  3. INTEGER k
+#
+def lista_do_int(lista):
+    slowo = ''
+    for i in lista:
+        slowo += str(i)
+    return slowo
+    
+def highestValuePalindrome(s, n, k):
+    lista_cyferek = [int(x) for x in s]
+    if n <= k:
+        for i in range(len(lista_cyferek)):
+            lista_cyferek[i] = 9
+        return lista_do_int(lista_cyferek)
+        
+    liczba_zmian = 0
+    ile = n//2
+    for i in range(ile):
+        if lista_cyferek[i] != lista_cyferek[-i-1]:
+            liczba_zmian += 1
+    if liczba_zmian > k: 
+        return '-1'
+        
+    if liczba_zmian == k:
+        for i in range(ile):
+            if lista_cyferek[i] != lista_cyferek[-i-1]:
+                wybor = max(lista_cyferek[i], lista_cyferek[-i-1])
+                lista_cyferek[i] = lista_cyferek[-i-1] = wybor
+        return lista_do_int(lista_cyferek)
+    
+    pozostale_zmiany = k
+    min_needed = liczba_zmian
+    for i in range(ile):
+        prawa = lista_cyferek[-i-1]
+        lewa = lista_cyferek[i]
+        if lewa == 9 and prawa == 9:
+            continue
+        
+        elif lewa == 9 or prawa == 9:
+            lista_cyferek[i] = 9 
+            lista_cyferek[-i-1] = 9
+            min_needed -= 1
+            pozostale_zmiany -= 1
+        elif pozostale_zmiany >= min_needed + 2:
+            if lewa == prawa:
+                lista_cyferek[i] = 9
+                lista_cyferek[-i-1] = 9
+                pozostale_zmiany -= 2
+            else: 
+                lista_cyferek[i] = 9
+                lista_cyferek[-i-1] = 9
+                pozostale_zmiany -= 2
+                min_needed -= 1
+        elif lewa != prawa:
+            if pozostale_zmiany >= min_needed + 1:
+                lista_cyferek[i] = 9
+                lista_cyferek[-i-1] = 9
+                pozostale_zmiany -= 2
+                min_needed -=1
+            else:
+                lista_cyferek[i] = max(lewa,prawa)
+                lista_cyferek[-i-1] = max(lewa,prawa)      
+                pozostale_zmiany -= 1
+                min_needed -= 1
+                     
+    if n % 2 == 1 and pozostale_zmiany > 0:
+        lista_cyferek[n // 2] = 9
+                
+    return lista_do_int(lista_cyferek)
+
+    
+    
+
+if __name__ == '__main__':
